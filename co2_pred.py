@@ -11,77 +11,25 @@ from PIL import Image
 # ✅ Set dynamic layout
 st.set_page_config(layout="wide")  # Enables responsive width
 
-# ✅ Load and Display the Header Image
-header_image_path = "app/header.png"
-try:
-    image = Image.open(header_image_path)
-    st.image(image, use_container_width=True)  # Full-width image # Alt: , caption="An AI-generated image of a sports car surrounded by smoke"
-except FileNotFoundError:
-    st.warning("⚠️ Header image not found! Ensure 'header.png' is in the directory.")
-
-import sklearn
-st.write("Scikit-learn version:", sklearn.__version__)
-
-import requests
-import os
-
-# ✅ Your Google Drive Model File ID
-GOOGLE_DRIVE_FILE_ID = "1t3QqBWRCZeCt5GXAxCOpuyi0TQV8_Cuf"  # Replace with actual ID
-MODEL_FILENAME = "random_forest.pkl"
-MODEL_PATH = f"app/{MODEL_FILENAME}"  # Local path where model is stored
-
-# ✅ Function to Download File from Google Drive
-def download_from_google_drive(file_id, destination):
-    """Downloads a file from Google Drive handling large file permissions"""
-    URL = "https://drive.google.com/uc?export=download"
-    
-    session = requests.Session()
-    response = session.get(URL, params={'id': file_id}, stream=True)
-    
-    # Google Drive uses a confirmation token for large files
-    for key, value in response.cookies.items():
-        if key.startswith('download_warning'):
-            response = session.get(URL, params={'id': file_id, 'confirm': value}, stream=True)
-            break
-
-    # Write file in chunks
-    with open(destination, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            if chunk:
-                f.write(chunk)
-
-# ✅ Load the trained Random Forest model
-
+# ✅ Load the trained Random Forest model correctly
 @st.cache_resource
 def load_model():
     try:
-        # Ensure the model is downloaded
-        if not os.path.exists(model_path) or os.path.getsize(model_path) < 1e6:  # Check for at least 1MB size
-            st.write("🔄 Downloading model from Google Drive...")
-            gdown.download(drive_url, model_path, quiet=False)
-
-        # Debugging: Print model file size before loading
-        if os.path.exists(model_path):
-            file_size = os.path.getsize(model_path)
-            st.write(f"📂 Model file size: {file_size / 1e6:.2f} MB")
-
-        # Ensure the model is properly downloaded
-        if not os.path.exists(model_path) or os.path.getsize(model_path) < 1e6:
-            st.error("❌ Model file is missing or incomplete!")
-            return None
-
-        # Attempt to load the model
-        model = joblib.load(model_path)
-
-        # Ensure it's a valid model
+        model = joblib.load("app/random_forest_compressed.pkl")
         if not hasattr(model, "predict"):
             st.error("❌ Loaded model is not a valid Random Forest model!")
             return None
-
-        st.write("✅ Model loaded successfully!")
         return model
     except Exception as e:
         st.error(f"❌ Error loading model: {e}")
+        return None
+
+@st.cache_resource
+def load_feature_columns():
+    try:
+        return joblib.load("app/feature_columns.pkl")
+    except Exception as e:
+        st.error(f"❌ Error loading feature columns: {e}")
         return None
 
 # Load Model & Features
