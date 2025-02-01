@@ -51,34 +51,37 @@ def download_from_google_drive(file_id, destination):
                 f.write(chunk)
 
 # ✅ Load the trained Random Forest model
+
 @st.cache_resource
 def load_model():
     try:
-        # Download model only if it doesn't exist
-        if not os.path.exists(MODEL_PATH):
-            st.info("🔄 Downloading model from Google Drive...")
-            download_from_google_drive(GOOGLE_DRIVE_FILE_ID, MODEL_PATH)
-            st.success("✅ Model downloaded successfully!")
+        # Ensure the model is downloaded
+        if not os.path.exists(model_path) or os.path.getsize(model_path) < 1e6:  # Check for at least 1MB size
+            st.write("🔄 Downloading model from Google Drive...")
+            gdown.download(drive_url, model_path, quiet=False)
 
-        # Load the model
-        model = joblib.load(MODEL_PATH)
-        
+        # Debugging: Print model file size before loading
+        if os.path.exists(model_path):
+            file_size = os.path.getsize(model_path)
+            st.write(f"📂 Model file size: {file_size / 1e6:.2f} MB")
+
+        # Ensure the model is properly downloaded
+        if not os.path.exists(model_path) or os.path.getsize(model_path) < 1e6:
+            st.error("❌ Model file is missing or incomplete!")
+            return None
+
+        # Attempt to load the model
+        model = joblib.load(model_path)
+
+        # Ensure it's a valid model
         if not hasattr(model, "predict"):
             st.error("❌ Loaded model is not a valid Random Forest model!")
             return None
-        
-        return model
 
+        st.write("✅ Model loaded successfully!")
+        return model
     except Exception as e:
         st.error(f"❌ Error loading model: {e}")
-        return None
-
-@st.cache_resource
-def load_feature_columns():
-    try:
-        return joblib.load("app/feature_columns.pkl")
-    except Exception as e:
-        st.error(f"❌ Error loading feature columns: {e}")
         return None
 
 # Load Model & Features
