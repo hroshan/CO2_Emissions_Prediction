@@ -28,36 +28,45 @@ import os
 # ✅ Your Google Drive Model File ID
 GOOGLE_DRIVE_FILE_ID = "1t3QqBWRCZeCt5GXAxCOpuyi0TQV8_Cuf"  # Replace with actual ID
 MODEL_FILENAME = "random_forest_model.pkl"
+MODEL_PATH = f"app/{MODEL_FILENAME}"  # Local path where model is stored
 
-# ✅ Function to Download Model from Google Drive
+# ✅ Function to Download File from Google Drive
+def download_from_google_drive(file_id, destination):
+    """Downloads a file from Google Drive handling large file permissions"""
+    URL = "https://drive.google.com/uc?export=download"
+    
+    session = requests.Session()
+    response = session.get(URL, params={'id': file_id}, stream=True)
+    
+    # Google Drive uses a confirmation token for large files
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            response = session.get(URL, params={'id': file_id, 'confirm': value}, stream=True)
+            break
+
+    # Write file in chunks
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                f.write(chunk)
+
+# ✅ Load the trained Random Forest model
 @st.cache_resource
 def load_model():
-    model_path = f"app/{MODEL_FILENAME}"  # Local path to store the model
-    
-    # If model is not already downloaded, fetch it from Google Drive
-    if not os.path.exists(model_path):
-        try:
-            gdrive_url = f"https://drive.google.com/uc?export=download&id={GOOGLE_DRIVE_FILE_ID}"
-            response = requests.get(gdrive_url, stream=True)
-            response.raise_for_status()  # Raise error if download fails
-            
-            # Save the model locally
-            with open(model_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            
+    try:
+        # Download model only if it doesn't exist
+        if not os.path.exists(MODEL_PATH):
+            st.info("🔄 Downloading model from Google Drive...")
+            download_from_google_drive(GOOGLE_DRIVE_FILE_ID, MODEL_PATH)
             st.success("✅ Model downloaded successfully!")
 
-        except Exception as e:
-            st.error(f"❌ Error downloading model: {e}")
-            return None
-
-    # Load the model
-    try:
-        model = joblib.load(model_path)
+        # Load the model
+        model = joblib.load(MODEL_PATH)
+        
         if not hasattr(model, "predict"):
             st.error("❌ Loaded model is not a valid Random Forest model!")
             return None
+        
         return model
 
     except Exception as e:
