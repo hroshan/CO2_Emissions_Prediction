@@ -6,3 +6,5 @@ scikit-learn
 matplotlib
 seaborn
 Pillow
+requests
+os
