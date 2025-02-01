@@ -19,6 +19,10 @@ try:
 except FileNotFoundError:
     st.warning("⚠️ Header image not found! Ensure 'header.png' is in the directory.")
 
+import streamlit as st
+import sklearn
+st.write("Scikit-learn version:", sklearn.__version__)
+
 # ✅ Load the trained Random Forest model correctly
 @st.cache_resource
 def load_model():
