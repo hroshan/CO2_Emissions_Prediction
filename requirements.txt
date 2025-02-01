@@ -8,3 +8,4 @@ seaborn
 Pillow
 requests
 os
+Cython
