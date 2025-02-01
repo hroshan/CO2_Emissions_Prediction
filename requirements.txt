@@ -2,7 +2,7 @@ streamlit
 pandas
 numpy
 joblib
-scikit-learn
+scikit-learn==1.2.2  # the exact version I trained with
 matplotlib
 seaborn
 Pillow
