@@ -27,7 +27,7 @@ import os
 
 # ✅ Your Google Drive Model File ID
 GOOGLE_DRIVE_FILE_ID = "1t3QqBWRCZeCt5GXAxCOpuyi0TQV8_Cuf"  # Replace with actual ID
-MODEL_FILENAME = "random_forest_model.pkl"
+MODEL_FILENAME = "random_forest.pkl"
 MODEL_PATH = f"app/{MODEL_FILENAME}"  # Local path where model is stored
 
 # ✅ Function to Download File from Google Drive
