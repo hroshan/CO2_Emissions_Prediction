@@ -19,19 +19,47 @@ try:
 except FileNotFoundError:
     st.warning("⚠️ Header image not found! Ensure 'header.png' is in the directory.")
 
-import streamlit as st
 import sklearn
 st.write("Scikit-learn version:", sklearn.__version__)
 
-# ✅ Load the trained Random Forest model correctly
+import requests
+import os
+
+# ✅ Your Google Drive Model File ID
+GOOGLE_DRIVE_FILE_ID = "1t3QqBWRCZeCt5GXAxCOpuyi0TQV8_Cuf"  # Replace with actual ID
+MODEL_FILENAME = "random_forest_model.pkl"
+
+# ✅ Function to Download Model from Google Drive
 @st.cache_resource
 def load_model():
+    model_path = f"app/{MODEL_FILENAME}"  # Local path to store the model
+    
+    # If model is not already downloaded, fetch it from Google Drive
+    if not os.path.exists(model_path):
+        try:
+            gdrive_url = f"https://drive.google.com/uc?export=download&id={GOOGLE_DRIVE_FILE_ID}"
+            response = requests.get(gdrive_url, stream=True)
+            response.raise_for_status()  # Raise error if download fails
+            
+            # Save the model locally
+            with open(model_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+            
+            st.success("✅ Model downloaded successfully!")
+
+        except Exception as e:
+            st.error(f"❌ Error downloading model: {e}")
+            return None
+
+    # Load the model
     try:
-        model = joblib.load("app/random_forest_compressed.pkl")
+        model = joblib.load(model_path)
         if not hasattr(model, "predict"):
             st.error("❌ Loaded model is not a valid Random Forest model!")
             return None
         return model
+
     except Exception as e:
         st.error(f"❌ Error loading model: {e}")
         return None
