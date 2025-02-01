@@ -11,6 +11,14 @@ from PIL import Image
 # ✅ Set dynamic layout
 st.set_page_config(layout="wide")  # Enables responsive width
 
+# ✅ Load and Display the Header Image
+header_image_path = "app/header.png"
+try:
+    image = Image.open(header_image_path)
+    st.image(image, use_container_width=True)  # Full-width image # Alt: , caption="An AI-generated image of a sports car surrounded by smoke"
+except FileNotFoundError:
+    st.warning("⚠️ Header image not found! Ensure 'header.png' is in the directory.")
+
 # ✅ Load the trained Random Forest model correctly
 @st.cache_resource
 def load_model():
