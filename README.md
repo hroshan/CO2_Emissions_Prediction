@@ -12,7 +12,7 @@ This repository contains the **Streamlit app** and **Jupyter Notebook** for pred
 
 ## 📂 Repository Structure  
 ### 🖥️ Code & Model  
-- **`co2_prediction.ipynb`** → Jupyter Notebook with full data analysis and model training  
+- **`CO2_Emission_Prediction.ipynb`** → Jupyter Notebook with full data analysis and model training  
 - **`co2_pred.py`** → Streamlit app code for real-time predictions  
 - **`random_forest_compressed.pkl`** → Compressed trained model for deployment  
 - **`feature_columns.pkl`** → Saved feature list for consistent input processing  
