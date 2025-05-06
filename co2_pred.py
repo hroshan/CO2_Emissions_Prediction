@@ -68,17 +68,17 @@ def plot_residuals(show_prediction=False, predicted_value=None, lower_bound=None
     plt.style.use("dark_background") # Apply dark theme to match the app interface
     plt.figure(figsize=(6, 4))
     # KDE plots for actual and predicted emissions
-    ax = sns.kdeplot(actual, color="#1E90FF", label="Actual CO₂ Emissions", bw_adjust=0.3, linewidth=6)  # Bright Blue- Actual
+    ax = sns.kdeplot(actual, color="#1E90FF", label="Actual CO₂ Emission Rate", bw_adjust=0.3, linewidth=6)  # Bright Blue- Actual
     sns.kdeplot(predicted_rf, color="red", label="Random Forest Predictions", ax=ax, bw_adjust=0.3, linewidth=2)  # Bright Orange- RF Predictions
     # Customize grid and labels for dark theme
     plt.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.7)
-    plt.xlabel("CO₂ Emissions (g/mi)", fontsize=12, color='white')
+    plt.xlabel("CO₂ Emission Rate (g/mi)", fontsize=12, color='white')
     plt.ylabel("Proportion of Cars (×10⁻³)", fontsize=12, color='white')  # Adjusted label
     # Scale y-axis to remove leading zeros
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda y, _: f"{y * 1000:.0f}"))
-    plt.title("Predicted vs. Actual CO₂ Emissions Distribution", fontsize=14, color='white')
+    plt.title("Predicted vs. Actual CO₂ Emission Rates Distribution", fontsize=14, color='white')
     if show_prediction and predicted_value is not None:
-        plt.axvline(x=predicted_value, color="#FFA500", linestyle='solid', linewidth=1, label="Predicted Emissions") # Add prediction result as a text annotation
+        plt.axvline(x=predicted_value, color="#FFA500", linestyle='solid', linewidth=1, label="Predicted Emission Rate") # Add prediction result as a text annotation
         plt.axvspan(lower_bound, upper_bound, color="green", alpha=1, label="95% Confidence Interval") # Add confidence interval as a vertical band
 
     plt.legend(facecolor='black', edgecolor='white', fontsize=10) # Customize legend
@@ -114,7 +114,7 @@ info_container = st.container()  # info
 
 # ✅ HEADER SECTION
 with header_container:
-    st.markdown("<h1 style='text-align: center;'>Vehicle CO₂ Emission Predictor 🚗💨</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Vehicle CO₂ Emission Rate Predictor 🚗💨</h1>", unsafe_allow_html=True)
 
 # ✅ MIDDLE SECTION: Holds three sections in a **flexible layout**
 with middle_container:
@@ -128,15 +128,15 @@ with middle_container:
 with col1:
     st.subheader("📌 Introduction")
     st.markdown("""
-    This app predicts use-phase **CO₂ emissions (g/mi)** for Internal Combustion Engine Vehicles (ICEVs) based on their specifications using a **Random Forest ML Model** with 99.56% accuracy.
+    This app predicts use-phase **CO₂ emission rates (g/mi)** for Internal Combustion Engine Vehicles (ICEVs) based on their specifications using a **Random Forest ML Model** with 99.56% accuracy.
 
     **How to use this app:**  
     1️⃣ **Choose an input method:** Select "Customize Input" to enter vehicle specs or pick a sample vehicle.  
     2️⃣ **Enter details (if Customize input):** Adjust specs like engine size, transmission type, and fuel type. Inputs are **disabled** for samples but show their values.  
     3️⃣ **Click "Apply Vehicle Specification" button (if "Customize Input") to update inputs.  
-    4️⃣ **Click "Predict CO₂ Emissions"** to generate a prediction with a **95% confidence interval**.  
-    5️⃣ **Review results: Examine the predicted CO₂ emissions and confidence interval.  
-    6️⃣ **Compare with actual emissions: If a sample is selected, the actual CO₂ value appears with a % difference analysis.  
+    4️⃣ **Click "Predict CO₂ Emission Rate"** to generate a prediction with a **95% confidence interval**.  
+    5️⃣ **Review results: Examine the predicted CO₂ emission rate and confidence interval.  
+    6️⃣ **Compare with actual emission rates: If a sample is selected, the actual CO₂ value appears with a % difference analysis.  
     7️⃣ **Check distribution plot on the right. It updates after prediction, showing the model estimation, confidence interval, and how it compares to the overall distribution.  
 
     Built in ***Python*** and ***Streamlit***, using a 27k data records from the **Natural Resources Canada**. For more details, scroll down.
@@ -210,7 +210,7 @@ with col1:
         </style>
         """, unsafe_allow_html=True)
         
-        if st.button("Predict CO₂ Emissions"):
+        if st.button("Predict CO₂ Emission Rate"):
             # Step 1: Create DataFrame for User Input
             user_input = pd.DataFrame([st.session_state.inputs])
             user_input_mapped = pd.DataFrame([{
@@ -260,15 +260,15 @@ with col1:
                     justification_text = "⚠️ **Higher deviation detected.**"
 
                 # ✅ Display Results
-                st.success(f"**Predicted CO₂ Emissions:** {st.session_state['predicted_value']:.2f} g/mi")
+                st.success(f"**Predicted CO₂ Emission Rate:** {st.session_state['predicted_value']:.2f} g/mi")
                 if std_residuals is not None:
                     st.write(f"95% Confidence Interval: [{st.session_state['lower_bound']:.2f}, {st.session_state['upper_bound']:.2f}] g/mi")
-                st.info(f"**Actual CO₂ Emissions:** {actual_value:.2f} g/mi")
+                st.info(f"**Actual CO₂ Emission Rate:** {actual_value:.2f} g/mi")
                 st.write(f"**Difference:** {difference:.2f} g/mi ({percentage_diff:.2f}%)")
                 st.write(justification_text)                
 
             else:
-                st.success(f"Predicted CO₂ Emissions: {st.session_state['predicted_value']:.2f} g/mi")
+                st.success(f"Predicted CO₂ Emission Rate: {st.session_state['predicted_value']:.2f} g/mi")
                 if std_residuals is not None:
                         st.write(f"95% Confidence Interval: [{st.session_state['lower_bound']:.2f}, {st.session_state['upper_bound']:.2f}] g/mi")
 
@@ -283,7 +283,7 @@ with col1:
             lower_bound=st.session_state.get("lower_bound"),
             upper_bound=st.session_state.get("upper_bound")
         )
-        st.write("The plot shows the distributions of actual and predicted CO₂ emissions. The blue line represents the actual values and the red line shows the predicted  emissions. The model smoothly follows the actual distribution (blue), even in high and low emission ranges. The green vertical line represents the predicted value for the input, along with its confidence interval band.")
+        st.write("The plot shows the distributions of actual and predicted CO₂ emission rates. The blue line represents the actual values and the red line shows the predicted  emission rate. The model (red) smoothly follows the actual distribution (blue), even in high and low emission rate ranges. The yellow thin vertical line represents the predicted value for the input, along with its confidence interval band (green).")
 
             
 # ✅ PROJECT OVERVIEW SECTION
@@ -294,18 +294,16 @@ with project_container:
 
     with col1:
         st.markdown("""
-        This app stems from a broader machine-learning study on predicting use-phase CO₂ emissions of Internal Combustion Engine Vehicles (ICEVs).
+        This app stems from a broader machine-learning study on predicting use-phase CO₂ emission rates of Internal Combustion Engine Vehicles (ICEVs).
         
-        The model uses data from 12 datasets by Natural Resources Canada, comprising 28,384 records for model years 1995-2025. Rigorous data preparation included handling missing data, feature engineering, variable selection, outlier detection, and categorical encoding.        
+        The model uses data from 12 datasets by Natural Resources Canada, comprising 28,384 records for model years 1995-2025. Rigorous data preparation included handling missing data, feature engineering, variable selection, outlier detection, and categorical encoding. The prepared dataset had 27,742 rows and 17 columns.       
         
-        **Exploratory Data Analysis (EDA)** was conducted to identify relationships between CO₂ emissions and influencing factors. This analysis included **univariate, bivariate, and multivariate visualizations**, which helped guide feature selection and modeling decisions.
-        
-        Exploratory Data Analysis (EDA) with univariate, bivariate, and multivariate visualizations guided feature selection and modeling decisions.
+        **Exploratory Data Analysis (EDA)** was conducted to identify relationships between CO₂ emission rates and influencing features. This analysis included **univariate, bivariate, and multivariate visualizations**, which helped guide feature selection and modeling decisions.
         """)
 
     with col2:
         st.markdown("""
-        Three machine learning approaches were tested: Multiple Ridge Regression, 2nd-degree Polynomial Ridge Regression, and Random Forest, with hyperparameter optimization. The prepared dataset had 27,742 rows and 17 columns, split 80/20 for training/testing. The random forest regressor (n_estimators=200, max_depth=20) performed best, showing Cross-Val R² = 0.9956.
+        Three machine learning approaches were tested: Multiple Ridge Regression, 2nd-degree Polynomial Ridge Regression, and Random Forest, with hyperparameter optimization. The prepared dataset was split 80/20 for training/testing. The random forest regressor (n_estimators=200, max_depth=20) performed best, showing Cross-Val R² = 0.9956.
         
         For deployment, the compressed model was exported using joblib and integrated into the Streamlit-based interactive interface.
         
@@ -316,7 +314,7 @@ with project_container:
         st.markdown("""
         Throughout this project, **prompt engineering** with **ChatGPT** was utilized for code development, optimization, image generation (header), and content structuring.
         
-        If you’re interested, check out the GitHub repository for the project Markdown and the app code. Feel free to reach out if you have any questions or comments—I’d love to hear your thoughts! I also appreciate any feedback, including suggestions for improvements. You can find my contact information below.
+        If you’re interested, check out the GitHub repository for the project Markdown and the app code. Feel free to reach out if you have any questions or comments—I’d love to hear your thoughts! You can find my contact information below.
 
         **📂 Data Sources:** [Natural Resources Canada](https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64)  
         **📂 App Code & Jupyter Notebook:** [GitHub Repo](https://github.com/hroshan/CO2_Emissions_Prediction)  
@@ -336,5 +334,5 @@ with info_container:
     👨‍💻 **Author:** Hasan Roshan – Sustainability Analyst, Ph.D. in Environmental & Natural Resource Sciences  
     🔗 **LinkedIn:** [linkedin.com/in/hasanroshan](https://linkedin.com/in/hasanroshan)  
     📢 **Disclaimer:** This app is intended for educational purpose only.      
-    🗓️ **Last Updated:** February 1, 2025
+    🗓️ **Last Updated:** May 6, 2025
     """)
