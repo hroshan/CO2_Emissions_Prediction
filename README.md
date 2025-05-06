@@ -1,10 +1,10 @@
 # CO₂ Emissions Prediction  
 ![App Preview](app_thumbnail.png)
 
-This repository contains the **Streamlit app** and **Jupyter Notebook** for predicting use-phase CO₂ emissions from internal combustion engine vehicles (ICEVs).  
+This repository contains the **Streamlit app** and **Jupyter Notebook** for predicting use-phase CO₂ emission rates (aka, emission intensities/ factors) from internal combustion engine vehicles (ICEVs).  
 
 ## 🚀 Key Features  
-- **Machine learning models** (Random Forest, Polynomial Ridge, and others) for CO₂ predictions  
+- **Machine learning models** (Random Forest, Polynomial Ridge, and others) for CO₂ emission rate predictions  
 - **Data preprocessing, feature engineering, and model evaluation**  
 - **Interactive Streamlit web app** for real-time predictions  
 - **Exploratory Data Analysis (EDA)** and residual analysis  
@@ -19,9 +19,9 @@ This repository contains the **Streamlit app** and **Jupyter Notebook** for pred
 
 ### 📊 Data Files  
 - **`data/sample_data.csv`** → Sample input data for predictions  
-- **`data/sample_CO2.csv`** → Sample CO₂ emissions data  
-- **`data/actual_rf.csv`** → Actual CO₂ emissions values for distribution plot  
-- **`data/predicted_rf.csv`** → Predicted CO₂ emissions values for distribution plot  
+- **`data/sample_CO2.csv`** → Sample CO₂ emission rates data  
+- **`data/actual_rf.csv`** → Actual CO₂ emission rate values for distribution plot  
+- **`data/predicted_rf.csv`** → Predicted CO₂ emission rate values for distribution plot  
 - **`data/residuals_rf.csv`** → Model residuals for calculating 95% confidence intervals  
 
 ---
