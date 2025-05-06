@@ -334,5 +334,6 @@ with info_container:
     👨‍💻 **Author:** Hasan Roshan – Sustainability Analyst, Ph.D. in Environmental & Natural Resource Sciences  
     🔗 **LinkedIn:** [linkedin.com/in/hasanroshan](https://linkedin.com/in/hasanroshan)  
     📢 **Disclaimer:** This app is intended for educational purpose only.      
+    🗓️ **Created:** February 1, 2025
     🗓️ **Last Updated:** May 6, 2025
     """)
